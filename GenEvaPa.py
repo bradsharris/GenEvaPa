@@ -246,9 +246,10 @@ ag = my_test.create_post_deletion_atomgroup()
 
 ############# IO
 u2atoms = ag
-coordinates = AnalysisFromFunction(lambda ag: ag.positions.copy(),u2atoms).run().results
+# coordinates = AnalysisFromFunction(lambda ag: ag.positions.copy(),u2atoms).run().results
+### DEPRECATED COMMANDS MAY BE NEEDED IN MDAnalysis versions below 2.0 ###
 u2 = mda.Merge(u2atoms)
-u2.load_new(coordinates, format=MemoryReader)
+# u2.load_new(coordinates, format=MemoryReader)
 with mda.Writer(args.o, reindex=True) as w:
 	w.fmt['box_orthorhombic'].format(box=(u.trajectory[0]._unitcell[0],u.trajectory[0]._unitcell[1],u.trajectory[0]._unitcell[2]))
 	w.write(u2.atoms)
