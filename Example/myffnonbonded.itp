@@ -1,8 +1,0 @@
-[ atomtypes ]
-; name      at.num  mass     charge ptype  sigma      epsilon
-Cl          17      35.45    0.0000  A   4.40104e-01  4.18400e-01
-Na          11      22.99    0.0000  A   3.32840e-01  1.15897e-02
-; spc water - use only with spc.itp & settles
-OW_spc       8      15.9994  0.0000  A   3.16557e-01  6.50629e-01
-HW_spc       1       1.0080  0.0000  A   0.00000e+00  0.00000e+00
-
