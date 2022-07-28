@@ -18,4 +18,4 @@ module load bio3
 
 export OMP_NUM_THREADS=1
 
-./AutoEvap.py -tol 10 -nd 16262
+./AutoEvap.py -tol 10 -nd 385
