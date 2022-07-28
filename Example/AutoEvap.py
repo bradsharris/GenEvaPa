@@ -66,13 +66,10 @@ def replaceAll(file,search,replace):
 
 def create_new_file(oldfile,newfile):
 	cwd=os.getcwd()
-	if os.path.isfile(newfile):
-		print("file exists")
-	else:
-		with open(oldfile, 'r') as ofile:
-			lines = ofile.readlines()
-		with open(newfile, 'w') as nfile:
-			nfile.writelines(lines)
+	with open(oldfile, 'r') as ofile:
+		lines = ofile.readlines()
+	with open(newfile, 'w') as nfile:
+		nfile.writelines(lines)
 
 def modify_evap(paste_file,cp_file):
 	source_dir=os.getcwd()
@@ -90,17 +87,17 @@ def topology_SOL_delete(topologyfile,number_delete):
 		lines = tfile.readlines()
 
 	for p in range(-1,-10, -1):
-		print(lines[p])
+		# print(lines[p])
 		if "SOL" in lines[p]:
 			break
 
 
 	numSOLS = int(lines[p][3:])
+	print("Previous step solvent #:",numSOLS)
 	numSOLS = numSOLS - (number_delete)
-	print(numSOLS)
-	print(p)
+	print("Current step solvent #:",numSOLS)
 	newline = str(lines[p][:3]) + '         ' + str((numSOLS)) + "\n"
-	print(newline)
+	# print(newline)
 	with open(topologyfile, 'w') as wfile:
 		wfile.writelines(lines[:p] + [newline] + lines[p+1:])
 
@@ -108,7 +105,7 @@ i = 1
 j = 1
 i_max = 9
 j_max = 9
-while True:
+while i <= i_max:
 	k = i + 1
 	bn_evap = "Evaporated{:d}.gro".format(i)
 	bn_em = "em{:d}".format(i)
@@ -133,13 +130,15 @@ while True:
 	energy_out = "energy{:d}.xvg".format(i)
 	visc_out = "visco{:d}.xvg".format(i)
 
-	step1 = ['grompp','-f','minim.mdp','-c',bn_evap,'-p','FmocHep.top','-o',em_tpr]
+	cur_top = "FmocHep_step{:d}.top".format(i)
+
+	step1 = ['grompp','-f','minim.mdp','-c',bn_evap,'-p',cur_top,'-o',em_tpr]
 	step2 = ['mdrun','-deffnm',bn_em,'-nt','1']
-	step3 = ['grompp','-f','nvt.mdp','-c',em_gro,'-p','FmocHep.top','-o',nvt_tpr]
+	step3 = ['grompp','-f','nvt.mdp','-c',em_gro,'-p',cur_top,'-o',nvt_tpr]
 	step4 = ['mdrun','-deffnm',bn_nvt,'-nt','1']
-	# step5 = ['grompp','-f','npt.mdp','-c',nvt_gro,'-p','FmocHep.top','-o',npt_tpr]
+	# step5 = ['grompp','-f','npt.mdp','-c',nvt_gro,'-p',cur_top,'-o',npt_tpr]
 	# step6 = ['mdrun','-deffnm',bn_npt]
-	step7 = ['grompp','-f','md.mdp','-c',nvt_gro,'-p','FmocHep.top','-o',md_tpr]
+	step7 = ['grompp','-f','md.mdp','-c',nvt_gro,'-p',cur_top,'-o',md_tpr]
 	step8 = ['mdrun','-deffnm',bn_md,'-nt','1']
 
 
@@ -164,15 +163,15 @@ while True:
 	# run_sbatch(step7)
 
 	j = j + 1
-
+	new_top = "FmocHep_step{:d}.top".format(j)
 	new_evap = "Evaporated{:d}.gro".format(j)
-	step9 = ['-f',md_gro,'-s',md_gro,'-tol',str(tolerance),'-nd',str(number_delete),'-o',new_evap,'-w',"'name OW'",'-ref',"'resid 1-5'",'-sol',"'resname SOL'",'-misc',"'resname Na'"]
-	print(j)
-	print(new_evap)
+	step9 = ['-f',md_gro,'-s',md_gro,'-tol',str(tolerance),'-nd',str(number_delete),'-o',new_evap,'-w','name OW','-ref','resid 1-5','-sol','resname SOL','-misc','resname Na']
+	print("preparing step #",j)
+	print("new filename is", new_evap)
 	run_evaporation(step9)
 	modify_evap(new_evap,md_gro)
-
-	topology_SOL_delete("FmocHep.top",number_delete)
+	create_new_file(cur_top,new_top)
+	topology_SOL_delete(new_top,number_delete)
 	
 	i = i + 1
 	if i > i_max:
