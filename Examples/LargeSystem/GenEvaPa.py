@@ -251,5 +251,5 @@ u2atoms = ag
 u2 = mda.Merge(u2atoms)
 # u2.load_new(coordinates, format=MemoryReader)
 with mda.Writer(args.o, reindex=True) as w:
-	w.fmt['box_orthorhombic'].format(box=(u.trajectory[0]._unitcell[0],u.trajectory[0]._unitcell[1],u.trajectory[0]._unitcell[2]))
+#	w.fmt['box_orthorhombic'].format(box=(u.trajectory[0]._unitcell[0],u.trajectory[0]._unitcell[1],u.trajectory[0]._unitcell[2]))
 	w.write(u2.atoms)
