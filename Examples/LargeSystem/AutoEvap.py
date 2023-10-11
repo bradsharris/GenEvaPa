@@ -133,13 +133,13 @@ while i <= i_max:
 	cur_top = "FmocHep_step{:d}.top".format(i)
 
 	step1 = ['grompp','-f','minim.mdp','-c',bn_evap,'-p',cur_top,'-o',em_tpr]
-	step2 = ['mdrun','-deffnm',bn_em,'-nt','1']
+	step2 = ['mdrun','-deffnm',bn_em]
 	step3 = ['grompp','-f','nvt.mdp','-c',em_gro,'-p',cur_top,'-o',nvt_tpr]
-	step4 = ['mdrun','-deffnm',bn_nvt,'-nt','1']
+	step4 = ['mdrun','-deffnm',bn_nvt]
 	# step5 = ['grompp','-f','npt.mdp','-c',nvt_gro,'-p',cur_top,'-o',npt_tpr]
 	# step6 = ['mdrun','-deffnm',bn_npt]
 	step7 = ['grompp','-f','md.mdp','-c',nvt_gro,'-p',cur_top,'-o',md_tpr]
-	step8 = ['mdrun','-deffnm',bn_md,'-nt','1']
+	step8 = ['mdrun','-deffnm',bn_md]
 
 
 	run_gromacs(step1)
